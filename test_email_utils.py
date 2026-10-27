@@ -1,4 +1,4 @@
-from email_utils import analyse_email
+from email_utils import analyse_email, validate_ai_response
 def test_word_count():
     assert analyse_email("Hello") == (1, 5)
     
@@ -11,3 +11,42 @@ def test_empty_email():
     
 def test_whitespace_email():
     assert analyse_email("   ")==(0,3)
+    
+def test_valid_ai_response():
+    ai_data = {
+        "priority": "High",
+        "category": "Delivery",
+        "sentiment": "Negative",
+        "summary": "The customer reports a delayed order."
+    }
+
+    assert validate_ai_response(ai_data) is True
+    
+def test_invalid_ai_response():
+    ai_data = {
+        "priority": "High",
+        "category": "Delivery",
+        "sentiment": "Angry",
+        "summary": "The customer reports a delayed order."
+    }
+
+    assert validate_ai_response(ai_data) is False
+    
+def test_missing_priority():
+    ai_data = {
+        "category": "Delivery",
+        "sentiment": "Negative",
+        "summary": "The customer reports a delayed order."
+    }
+
+    assert validate_ai_response(ai_data) is False
+    
+def test_empty_summary():
+    ai_data = {
+        "priority": "High",
+        "category": "Delivery",
+        "sentiment": "Negative",
+        "summary": "   "
+    }
+
+    assert validate_ai_response(ai_data) is False
